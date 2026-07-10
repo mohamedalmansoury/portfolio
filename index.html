@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohamed AL-Mansoury — GeoAI Engineer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#f5f1e6;
+  --bg-panel:#e6f2ec;
+  --line:#bcd9cc;
+  --cyan:#018b61;
+  --cyan-dim:rgba(1,139,97,0.28);
+  --sand:#2b2b2b;
+  --text:#2b2b2b;
+  --text-dim:#86847f;
+  --text-faint:#aeaca5;
+  --nav-bg:rgba(245,241,230,0.75);
+  --btn-text:#f5f1e6;
+  --btn-hover:#017652;
+  --card-tint:rgba(1,139,97,0.05);
+  --chip-border:#90a59c;
+  --chip-bg:#ddd9d0;
+  --cert-feat-bg:#dde7d9;
+  --sel-text:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+}
+::selection{background:var(--cyan);color:var(--sel-text);}
+
+/* ---- Kufic grid backdrop ---- */
+.grid-bg{
+  position:fixed; inset:0; z-index:0; opacity:.05; pointer-events:none;
+  background-image:
+    linear-gradient(var(--cyan) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cyan) 1px, transparent 1px);
+  background-size:64px 64px;
+}
+.contour-bg{
+  position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.35;
+}
+
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px;position:relative;z-index:1;}
+section{position:relative;z-index:1;}
+
+/* ---- NAV ---- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  backdrop-filter:blur(12px);
+  background:var(--nav-bg);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{max-width:1080px;margin:0 auto;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;}
+.logo-mark{
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-links{display:flex;gap:28px;font-family:'JetBrains Mono',monospace;font-size:14.5px;color:var(--text-dim);}
+.nav-links a{transition:color .2s;}
+.nav-links a:hover{color:var(--cyan);}
+
+/* ---- HERO ---- */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding-top:80px;padding-bottom:60px;
+}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--cyan);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:'';width:8px;height:8px;background:var(--cyan);display:inline-block;
+  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);}
+h1.title{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:clamp(2.6rem, 6.4vw, 5rem);
+  line-height:1.02;
+  letter-spacing:-.02em;
+  margin-bottom:26px;
+}
+h1.title .line2{color:var(--text-dim);font-weight:500;}
+.hero-sub{
+  font-size:19px;color:var(--text-dim);max-width:600px;line-height:1.7;margin-bottom:36px;
+}
+.hero-sub strong{color:var(--text);font-weight:600;}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px;}
+.btn{
+  font-family:'JetBrains Mono',monospace;font-size:14.5px;padding:14px 24px;
+  border:1px solid var(--line);transition:all .2s;letter-spacing:.02em;
+}
+.btn-primary{background:var(--cyan);color:var(--btn-text);border-color:var(--cyan);font-weight:600;}
+.btn-primary:hover{background:var(--btn-hover);}
+.btn-ghost{color:var(--text);}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+
+.hero-stats{display:flex;gap:0;border-top:1px solid var(--line);padding-top:24px;flex-wrap:wrap;}
+.stat{padding:0 28px 0 0;margin-right:28px;border-right:1px solid var(--line);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--cyan);}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin-top:6px;}
+.stat-label .hl{color:var(--cyan);font-weight:700;}
+
+/* ---- SECTION HEADERS ---- */
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:48px;}
+.sec-num{font-family:'JetBrains Mono',monospace;color:var(--text-faint);font-size:15px;}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;}
+.sec-title span{color:var(--cyan);}
+section.pad{padding:110px 0;border-top:1px solid var(--line);}
+
+/* ---- ABOUT ---- */
+.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:60px;}
+.about-body p{color:var(--text-dim);line-height:1.85;font-size:17.5px;margin-bottom:18px;}
+.about-body strong{color:var(--text);font-weight:600;}
+.focus-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);}
+.focus-item{padding:17px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:14.5px;}
+.focus-item span:first-child{color:var(--text-dim);}
+.focus-item span:last-child{color:var(--cyan);}
+
+/* ---- EXPERIENCE ---- */
+.exp-row{
+  display:grid;grid-template-columns:170px 1fr;gap:32px;padding:28px 0;border-bottom:1px solid var(--line);
+  position:relative;transition:padding-left .25s;
+}
+.exp-row::before{
+  content:'';position:absolute;left:-16px;top:34px;width:7px;height:7px;background:var(--cyan);
+  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);opacity:0;transition:opacity .25s;
+}
+.exp-row:hover{padding-left:8px;}
+.exp-row:hover::before{opacity:1;}
+.exp-row:first-child{border-top:1px solid var(--line);}
+.exp-date{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text-faint);padding-top:3px;}
+.exp-role{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:600;margin-bottom:6px;}
+.exp-org{color:var(--cyan);font-size:15px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;}
+.exp-desc{color:var(--text-dim);font-size:16px;line-height:1.75;max-width:620px;}
+
+/* ---- PROJECTS ---- */
+.proj-card{
+  border:1px solid var(--line);padding:38px;margin-bottom:24px;position:relative;
+  transition:border-color .25s, transform .25s;
+  background:linear-gradient(180deg, var(--card-tint), transparent);
+}
+.proj-card:hover{border-color:var(--cyan-dim);transform:translateY(-3px);}
+.proj-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+.proj-name{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:700;}
+.proj-tag{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-faint);border:1px solid var(--line);padding:5px 12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.proj-desc{color:var(--text-dim);line-height:1.8;font-size:16px;margin-bottom:20px;max-width:700px;}
+.proj-stack{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+.chip{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--sand);border:1px solid var(--chip-border);padding:5px 12px;background:var(--chip-bg);}
+.proj-links{display:flex;gap:10px;flex-wrap:wrap;}
+.proj-links a{font-family:'JetBrains Mono',monospace;font-size:13.5px;padding:9px 18px;border:1px solid var(--line);color:var(--text-dim);transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.proj-links a:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* ---- SKILLS ---- */
+.skill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+.skill-col{background:var(--bg);padding:32px;}
+.skill-col h4{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:13.5px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;}
+.skill-col ul{list-style:none;}
+.skill-col li{color:var(--text-dim);font-size:15.5px;padding:8px 0;border-bottom:1px solid var(--line);}
+.skill-col li:last-child{border-bottom:none;}
+
+/* ---- CERTS ---- */
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);}
+.cert-item{background:var(--bg);padding:24px;}
+.cert-item.featured{background:var(--cert-feat-bg);}
+.cert-name{font-weight:600;font-size:17.5px;margin-bottom:8px;line-height:1.45;}
+.cert-org{color:var(--text-dim);font-size:15px;font-family:'JetBrains Mono',monospace;}
+.cert-date{color:var(--text-faint);font-size:13.5px;margin-top:10px;font-family:'JetBrains Mono',monospace;}
+
+/* ---- CONTACT ---- */
+.contact-inner{text-align:center;padding:130px 0;}
+.contact-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:700;margin-bottom:20px;}
+.contact-title span{color:var(--cyan);}
+.contact-sub{color:var(--text-dim);margin-bottom:40px;font-size:18px;}
+.contact-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+footer{border-top:1px solid var(--line);padding:28px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--text-faint);}
+
+@media(max-width:760px){
+  .about-grid{grid-template-columns:1fr;gap:36px;}
+  .exp-row{grid-template-columns:1fr;gap:6px;padding:20px 0;}
+  .skill-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .hero-stats{gap:0;flex-wrap:wrap;row-gap:18px;}
+  .stat{margin-right:18px;padding-right:18px;flex:1 1 40%;border-right:none;}
+  .wrap{padding:0 20px;}
+  section.pad{padding:64px 0;}
+  .hero{padding-top:100px;padding-bottom:40px;min-height:auto;}
+  h1.title{font-size:clamp(2.1rem,9vw,3rem);}
+  .hero-sub{font-size:16px;}
+  .hero-ctas{gap:10px;}
+  .btn{padding:12px 18px;font-size:13px;}
+  .proj-card{padding:24px 20px;}
+  .proj-top{flex-direction:column;align-items:flex-start;}
+  .cert-grid{grid-template-columns:1fr 1fr;}
+  .contact-inner{padding:80px 0;}
+  .contact-links{flex-direction:column;align-items:stretch;}
+  .contact-links a{justify-content:center;}
+  .nav-inner{padding:14px 20px;}
+  .sec-head{margin-bottom:32px;}
+}
+@media(max-width:480px){
+  .cert-grid{grid-template-columns:1fr;}
+  .stat{flex:1 1 100%;margin-right:0;border-right:none;padding-right:0;}
+  .hero-stats{border-top:1px solid var(--line);}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+/* ---- REVEAL ON SCROLL ---- */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* ---- ICONS ---- */
+.icon{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;flex-shrink:0;vertical-align:-3px;}
+.nav-links a{display:flex;align-items:center;gap:6px;position:relative;}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--cyan);
+  transition:width .25s ease;
+}
+.nav-links a:hover::after{width:100%;}
+
+/* corner brackets on cards */
+.corner{position:absolute;width:14px;height:14px;border-color:var(--cyan);opacity:0;transition:opacity .3s;}
+.proj-card:hover .corner, .exp-row:hover .corner{opacity:.8;}
+.corner.tl{top:-1px;left:-1px;border-top:2px solid;border-left:2px solid;}
+.corner.br{bottom:-1px;right:-1px;border-bottom:2px solid;border-right:2px solid;}
+
+/* glow pulse on featured stat / cert */
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 0 0 var(--cyan-dim);}
+  50%{box-shadow:0 0 24px 2px var(--cyan-dim);}
+}
+.cert-item.featured{animation:pulseGlow 4s ease-in-out infinite;}
+
+/* button shine */
+.btn{position:relative;overflow:hidden;}
+.btn-primary::before{
+  content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
+  transform:skewX(-20deg);transition:left .5s ease;
+}
+.btn-primary:hover::before{left:120%;}
+
+/* skill icon row */
+.skill-col h4{display:flex;align-items:center;gap:8px;}
+
+/* project card icon badge */
+.proj-icon{
+  width:38px;height:38px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;color:var(--cyan);transition:border-color .25s, transform .25s;
+}
+.proj-card:hover .proj-icon{border-color:var(--cyan);transform:rotate(8deg);}
+
+/* exp icon */
+.exp-icon{color:var(--cyan);margin-right:8px;}
+
+/* contact link icon */
+.contact-links a{display:flex;align-items:center;gap:8px;}
+
+/* animated underline for section titles */
+.sec-title{position:relative;display:inline-block;}
+.sec-title::after{
+  content:'';position:absolute;left:0;bottom:-10px;height:2px;width:36px;background:var(--cyan);
+}
+
+/* subtle floating diamond accent in hero */
+.hero{position:relative;}
+.hero::after{
+  content:'';position:absolute;top:18%;right:6%;width:120px;height:120px;
+  border:1px solid var(--cyan-dim);
+  clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  animation:spinSlow 22s linear infinite;
+  opacity:.5;
+}
+@keyframes spinSlow{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@media(max-width:760px){.hero::after{display:none;}}
+
+/* ---- AMBIENT MOTION EVERYWHERE ---- */
+@keyframes floatY{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+}
+@keyframes floatY2{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-5px);}
+}
+@keyframes driftX{
+  0%{transform:translateX(0);}
+  50%{transform:translateX(6px);}
+  100%{transform:translateX(0);}
+}
+@keyframes rotateSlow{
+  from{transform:rotate(0deg);} to{transform:rotate(360deg);}
+}
+@keyframes flicker{
+  0%,100%{opacity:1;} 50%{opacity:.55;}
+}
+@keyframes chipBob{
+  0%,100%{transform:translateY(0);} 50%{transform:translateY(-3px);}
+}
+@keyframes orbit{
+  from{transform:rotate(0deg) translateX(10px) rotate(0deg);}
+  to{transform:rotate(360deg) translateX(10px) rotate(-360deg);}
+}
+
+.eyebrow::before{animation:flicker 2.4s ease-in-out infinite;}
+
+.proj-icon{animation:floatY 4.5s ease-in-out infinite;}
+.proj-card:nth-child(2) .proj-icon{animation-delay:.4s;}
+.proj-card:nth-child(3) .proj-icon{animation-delay:.8s;}
+
+.exp-row::before{animation:orbit 3s linear infinite;}
+
+.chip{display:inline-block;animation:chipBob 3s ease-in-out infinite;}
+.chip:nth-child(2n){animation-delay:.3s;}
+.chip:nth-child(3n){animation-delay:.6s;}
+.chip:nth-child(4n){animation-delay:.9s;}
+
+.stat-num{animation:floatY2 5s ease-in-out infinite;}
+.stat:nth-child(2) .stat-num{animation-delay:.5s;}
+
+.skill-col h4 svg{animation:rotateSlow 12s linear infinite;}
+
+.cert-item.featured .cert-name{animation:floatY2 3.6s ease-in-out infinite;}
+
+.corner{animation:none;}
+.proj-card:hover .corner.tl{animation:driftX 1.6s ease-in-out infinite;}
+.proj-card:hover .corner.br{animation:driftX 1.6s ease-in-out infinite reverse;}
+
+.logo-mark rect{transform-origin:17px 17px;}
+.logo-mark{animation:rotateSlow 30s linear infinite;}
+
+.sec-num{display:inline-block;animation:floatY2 4s ease-in-out infinite;}
+
+@media(prefers-reduced-motion:reduce){
+  .eyebrow::before, .proj-icon, .exp-row::before, .chip, .stat-num,
+  .skill-col h4 svg, .cert-item.featured .cert-name, .logo-mark, .sec-num,
+  .proj-card:hover .corner.tl, .proj-card:hover .corner.br{animation:none!important;}
+}
+
+/* ---- FLOATING DECORATIVE ITEMS (per-section ambient motion) ---- */
+.floater{
+  position:absolute; z-index:0; pointer-events:none; color:var(--cyan);
+  opacity:.4;
+}
+.floater svg{width:100%;height:100%;display:block;}
+section{overflow:visible;}
+.pad{overflow:hidden;}
+
+@keyframes floatA{0%,100%{transform:translate(0,0) rotate(0deg);}50%{transform:translate(10px,-16px) rotate(8deg);}}
+@keyframes floatB{0%,100%{transform:translate(0,0) rotate(0deg);}50%{transform:translate(-14px,10px) rotate(-6deg);}}
+@keyframes floatC{0%,100%{transform:translateY(0);}50%{transform:translateY(-22px);}}
+@keyframes floatD{0%,100%{transform:translateX(0);}50%{transform:translateX(18px);}}
+@keyframes spinFloat{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes pulseFade{0%,100%{opacity:.15;}50%{opacity:.4;}}
+
+.f1{top:8%;left:4%;width:52px;height:52px;animation:floatA 7s ease-in-out infinite;}
+.f2{top:60%;right:6%;width:42px;height:42px;animation:floatB 8.5s ease-in-out infinite;}
+.f3{bottom:10%;left:10%;width:36px;height:36px;animation:floatC 6s ease-in-out infinite;}
+.f4{top:20%;right:14%;width:48px;height:48px;animation:spinFloat 14s linear infinite;}
+.f5{bottom:16%;right:22%;width:34px;height:34px;animation:pulseFade 4s ease-in-out infinite;}
+.f6{top:40%;left:2%;width:40px;height:40px;animation:floatD 9s ease-in-out infinite;}
+.f7{top:12%;right:30%;width:30px;height:30px;animation:floatC 5.5s ease-in-out infinite;}
+.f8{bottom:8%;left:30%;width:46px;height:46px;animation:floatA 8s ease-in-out infinite;}
+.f9{top:70%;left:16%;width:34px;height:34px;animation:spinFloat 18s linear infinite;}
+.f10{top:30%;right:4%;width:40px;height:40px;animation:floatB 6.5s ease-in-out infinite;}
+.f11{bottom:22%;right:8%;width:30px;height:30px;animation:pulseFade 5s ease-in-out infinite;}
+.f12{top:6%;left:24%;width:36px;height:36px;animation:floatD 7.5s ease-in-out infinite;}
+.f13{top:80%;left:44%;width:38px;height:38px;animation:floatA 9.5s ease-in-out infinite;}
+.f14{top:4%;right:44%;width:28px;height:28px;animation:floatC 6.8s ease-in-out infinite;}
+.f15{bottom:30%;left:48%;width:32px;height:32px;animation:spinFloat 16s linear infinite;}
+.f16{top:50%;right:38%;width:44px;height:44px;animation:pulseFade 4.5s ease-in-out infinite;}
+.f17{top:14%;left:44%;width:30px;height:30px;animation:floatB 7.2s ease-in-out infinite;}
+.f18{bottom:4%;right:44%;width:36px;height:36px;animation:floatD 8.8s ease-in-out infinite;}
+.f19{top:86%;right:16%;width:26px;height:26px;animation:floatA 6.2s ease-in-out infinite;}
+.f20{top:2%;left:60%;width:40px;height:40px;animation:spinFloat 20s linear infinite;}
+
+@media(max-width:760px){.floater{display:none;}}
+@media(prefers-reduced-motion:reduce){.floater{animation:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<canvas id="aiCanvas" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;"></canvas>
+<svg class="contour-bg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice">
+  <g fill="none" stroke="#018b61" stroke-width="1">
+    <path d="M-50,120 C 200,60 400,180 650,110 S 1100,60 1300,140" opacity=".25"/>
+    <path d="M-50,220 C 250,150 450,280 700,210 S 1100,160 1300,240" opacity=".18"/>
+    <path d="M-50,650 C 220,580 480,720 720,640 S 1150,600 1300,680" opacity=".2"/>
+    <path d="M-50,760 C 260,700 500,820 760,750 S 1150,700 1300,780" opacity=".12"/>
+  </g>
+</svg>
+
+<nav>
+  <div class="nav-inner">
+    <svg class="logo-mark" viewBox="0 0 34 34">
+      <rect x="4" y="4" width="26" height="26" fill="none" stroke="#018b61" stroke-width="1.5"/>
+      <rect x="10" y="10" width="14" height="14" fill="none" stroke="#018b61" stroke-width="1.5"/>
+      <rect x="14.5" y="14.5" width="5" height="5" fill="#018b61"/>
+    </svg>
+    <div class="nav-links">
+      <a href="#about"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.5-4 4-6 7-6s5.5 2 7 6"/></svg>About</a>
+      <a href="#experience"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Experience</a>
+      <a href="#projects"><svg class="icon" viewBox="0 0 24 24"><path d="M4 4l7 3v13l-7-3V4z"/><path d="M11 7l7-3v13l-7 3"/></svg>Projects</a>
+      <a href="#skills"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"/></svg>Skills</a>
+      <a href="#certs"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M8.5 13l-1.5 7 5-2.5 5 2.5-1.5-7"/></svg>Certs</a>
+      <a href="#contact"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero wrap">
+  <span class="floater f1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M13 15l3-3 5 5"/></svg></span>
+  <span class="floater f4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
+  <span class="floater f14"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
+  <span class="floater f20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12h8M12 8v8"/></svg></span>
+  <div class="eyebrow">Cairo, Egypt — Available for full-time &amp; remote roles</div>
+  <h1 class="title">Mohamed AL-Mansoury<br><span class="line2">GeoAI &amp; Computer Vision Engineer</span></h1>
+  <p class="hero-sub">Geomatics Engineering graduate specializing in <strong>GeoAI</strong> — where satellite imagery meets machine learning. I build systems that turn raw spatial data — SAR scenes, point clouds, sensor streams — into geolocated intelligence.</p>
+  <div class="hero-ctas">
+    <a class="btn btn-primary" href="#projects">View Projects</a>
+    <a class="btn btn-ghost" href="mailto:mohamed.a.almansoury@gmail.com">Get in Touch</a>
+    <a class="btn btn-ghost" href="https://github.com/mohamedalmansoury" target="_blank">GitHub ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">HCIA-AI</div><div class="stat-label">Huawei <span class="hl">certified</span>, thru 2029</div></div>
+    <div class="stat"><div class="stat-num">5 years</div><div class="stat-label">Geomatics Engineering</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="pad reveal" id="about">
+  <span class="floater f2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M2 12h20M12 2c2.5 2.7 4 6.3 4 10s-1.5 7.3-4 10c-2.5-2.7-4-6.3-4-10s1.5-7.3 4-10z"/></svg></span>
+  <span class="floater f17"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 20l4-10 4 6 3-8 5 12"/></svg></span>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2 class="sec-title">About</h2></div>
+    <div class="about-grid">
+      <div class="about-body">
+        <p>My academic journey focused on classical geomatics — <strong>photogrammetry, GIS, remote sensing, GNSS, spatial data infrastructure</strong> — at the Faculty of Engineering, Shoubra, Benha University. Alongside it, I built hands-on AI expertise: computer vision, deep learning, and spatial analytics applied to real geospatial problems.</p>
+        <p>My graduation project used <strong>Sentinel-1 SAR data</strong> to build an automated flood-mapping system for the Nile Floodplain — Refined Lee speckle filtering, Otsu thresholding, SRTM topographic correction — deployed as a live Streamlit app on Google Earth Engine.</p>
+        <p>I'm currently deepening my ML/DL foundations, sharpening the skills that connect classical geomatics with modern GeoAI systems work.</p>
+      </div>
+      <div class="focus-list">
+        <div class="focus-item"><span>Looking for</span><span>GeoAI / CV / ML roles</span></div>
+        <div class="focus-item"><span>Based in</span><span>Cairo, Egypt (remote-open)</span></div>
+        <div class="focus-item"><span>Languages</span><span>Arabic (native), English</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="pad reveal" id="experience">
+  <span class="floater f3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></span>
+  <span class="floater f7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8l6 8M18 8l-6 8"/></svg></span>
+  <span class="floater f15"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2 class="sec-title">Experience</h2></div>
+
+    <div class="exp-row">
+      <div class="exp-date">Aug – Nov 2025<br>Remote</div>
+      <div>
+        <div class="exp-role">AI Intern</div>
+        <div class="exp-org">Samsung Innovation Campus</div>
+        <div class="exp-desc">4-month intensive AI residency building end-to-end deep learning systems with computer vision and NLP. Engineered a heart-disease detection system from raw 12-lead ECG signals using a novel xLSTM architecture.</div>
+      </div>
+    </div>
+
+    <div class="exp-row">
+      <div class="exp-date">Jul – Aug 2025<br>Al Qalyubiyah, EG</div>
+      <div>
+        <div class="exp-role">Geomatics Engineer</div>
+        <div class="exp-org">Freelance</div>
+        <div class="exp-desc">Converted 3D point cloud data from Mobile Mapping Systems into precise CAD layouts. Performed feature extraction, produced detailed technical drawings, and ensured sub-centimeter accuracy against project specs.</div>
+      </div>
+    </div>
+
+    <div class="exp-row">
+      <div class="exp-date">Jan – Feb 2025<br>Benha, EG</div>
+      <div>
+        <div class="exp-role">AI Internship Trainee</div>
+        <div class="exp-org">National Telecommunication Institute (NTI)</div>
+        <div class="exp-desc">Completed an 80-hour intensive AI track with a perfect 100% assessment score. Applied computer vision models to real-world classification tasks, exceeding baseline accuracy targets.</div>
+      </div>
+    </div>
+
+    <div class="exp-row">
+      <div class="exp-date">Dec 2024 – Apr 2025<br>Remote</div>
+      <div>
+        <div class="exp-role">Data Scientist Intern</div>
+        <div class="exp-org">Qafza</div>
+        <div class="exp-desc">Applied Python, SQL, and ML/DL fundamentals across structured data science tasks as part of a hands-on internship program.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="pad reveal" id="projects">
+  <span class="floater f5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 17l4-4 4 4 4-8 4 4"/></svg></span>
+  <span class="floater f8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/><path d="M11 7h9M4 20h9"/></svg></span>
+  <span class="floater f11"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></span>
+  <span class="floater f13"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3l7 3v13l-7-3V3z"/><path d="M10 6l7-3v13l-7 3"/></svg></span>
+  <span class="floater f18"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="5" cy="6" r="1.4"/><circle cx="12" cy="4" r="1.4"/><circle cx="19" cy="7" r="1.4"/><circle cx="7" cy="16" r="1.4"/><path d="M5 6l7-2 7 3M5 6l2 10M12 4l3 12"/></svg></span>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2 class="sec-title">Selected <span>Projects</span></h2></div>
+
+    <div class="proj-card">
+      <span class="corner tl"></span><span class="corner br"></span>
+      <div class="proj-icon"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M2 16c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M2 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M12 3v9"/><path d="M8 8l4 4 4-4"/></svg></div>
+      <div class="proj-top">
+        <div class="proj-name">Nile Floodplain SAR Flood Mapping</div>
+        <div class="proj-tag">Graduation Project · 2026</div>
+      </div>
+      <p class="proj-desc">End-to-end automated flood mapping web app built on Sentinel-1 SAR data via Google Earth Engine, deployed as an interactive Streamlit tool. Refined Lee speckle filtering and Otsu thresholding distinguish water from land; SRTM elevation data masks high-slope terrain (&gt;5°) to cut false positives. Supports custom ROI upload (GeoJSON/Shapefile), real-time flood-area statistics, and GeoTIFF/Shapefile export to Google Drive.</p>
+      <div class="proj-stack">
+        <span class="chip">Sentinel-1 SAR</span><span class="chip">Google Earth Engine</span><span class="chip">Python</span><span class="chip">Streamlit</span>
+      </div>
+      <div class="proj-links">
+        <a href="https://lnkd.in/esubwm7V" target="_blank"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M5 5h6M5 5v6M5 5l14 14"/></svg>Live App</a>
+        <a href="https://lnkd.in/ef6tUZpH" target="_blank"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.7 5.4 3 5.4 3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.4c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+        <a href="https://lnkd.in/eJhB5g9W" target="_blank"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3V9z"/></svg>Demo</a>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <span class="corner tl"></span><span class="corner br"></span>
+      <div class="proj-icon"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-9 2 2h4"/></svg></div>
+      <div class="proj-top">
+        <div class="proj-name">xLSTM ECG Multi-Label Classification</div>
+        <div class="proj-tag">Samsung Innovation Campus · Nov 2025</div>
+      </div>
+      <p class="proj-desc">Healthcare AI system classifying 5 heart conditions from 12-lead ECG signals (PTB-XL dataset). Implemented a parallel xLSTM architecture combining sLSTM and mLSTM branches for stronger long-term temporal dependency capture, with a full bandpass/notch preprocessing pipeline and patient-metadata fusion for improved accuracy. Deployed as a live Streamlit inference app.</p>
+      <div class="proj-stack">
+        <span class="chip">PyTorch</span><span class="chip">PyTorch Lightning</span><span class="chip">xLSTM</span><span class="chip">WFDB</span><span class="chip">Streamlit</span>
+      </div>
+      <div class="proj-links">
+        <a href="https://lnkd.in/d9vbs5C9" target="_blank"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M5 5h6M5 5v6M5 5l14 14"/></svg>Live App</a>
+        <a href="https://github.com/mohamedalmansoury/xLSTM-ECG-Signals-Multilabel-Classification" target="_blank"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.7 5.4 3 5.4 3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.4c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+        <a href="https://lnkd.in/d_YFpRbf" target="_blank"><svg class="icon" style="width:13px;height:13px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 9l5 3-5 3V9z"/></svg>Demo</a>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <span class="corner tl"></span><span class="corner br"></span>
+      <div class="proj-icon"><svg class="icon" style="width:20px;height:20px" viewBox="0 0 24 24"><circle cx="5" cy="6" r="1.4"/><circle cx="12" cy="4" r="1.4"/><circle cx="19" cy="7" r="1.4"/><circle cx="7" cy="13" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="10" cy="19" r="1.4"/><circle cx="18" cy="17" r="1.4"/><path d="M5 6l7-2 7 3M5 6l2 7M12 4l3 8M19 7l-4 5M7 13l3 6M15 12l-5 7M15 12l3 5"/></svg></div>
+      <div class="proj-top">
+        <div class="proj-name">3D Point Cloud → CAD Pipeline</div>
+        <div class="proj-tag">Freelance · 2025</div>
+      </div>
+      <p class="proj-desc">Automated workflow converting Mobile Mapping System point cloud data into precise CAD layouts. Includes point cloud cleaning, automated feature extraction for buildings and line/point features, and accuracy validation against industry-standard specifications.</p>
+      <div class="proj-stack">
+        <span class="chip">Point Cloud Processing</span><span class="chip">CAD</span><span class="chip">Feature Extraction</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="pad reveal" id="skills">
+  <span class="floater f6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><path d="M8 15c1.5 1.3 6.5 1.3 8 0"/></svg></span>
+  <span class="floater f9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg></span>
+  <span class="floater f16"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"/></svg></span>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2 class="sec-title">Skills</h2></div>
+    <div class="skill-grid">
+      <div class="skill-col">
+        <h4><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 6 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-6-3.5-9s1-6.5 3.5-9z"/></svg>Geospatial</h4>
+        <ul>
+          <li>GeoAI &amp; Spatial Analytics</li>
+          <li>Remote Sensing / SAR Processing</li>
+          <li>Google Earth Engine</li>
+          <li>Photogrammetry</li>
+          <li>GIS · QGIS · ArcGIS</li>
+          <li>GNSS Positioning</li>
+          <li>Point Cloud Processing</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <h4><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="10" r="1.2"/><circle cx="15" cy="10" r="1.2"/><path d="M8 15c1.5 1.3 6.5 1.3 8 0"/></svg>AI / ML</h4>
+        <ul>
+          <li>Machine Learning</li>
+          <li>Deep Learning (xLSTM, CNNs, RNNs)</li>
+          <li>Computer Vision</li>
+          <li>PyTorch · PyTorch Lightning</li>
+          <li>TensorFlow · Keras</li>
+          <li>OpenCV · Scikit-learn</li>
+          <li>Time Series Analysis</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <h4><svg class="icon" viewBox="0 0 24 24"><path d="M14.5 3.5l6 6-2 2-6-6 2-2z"/><path d="M13 5L4 14v5h5l9-9"/></svg>Tools &amp; Platforms</h4>
+        <ul>
+          <li>Python · SQL · C++</li>
+          <li>Streamlit</li>
+          <li>Docker</li>
+          <li>Git / GitHub</li>
+          <li>AWS Foundations</li>
+          <li>Jupyter</li>
+          <li>NumPy · Pandas · SciPy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTS -->
+<section class="pad reveal" id="certs">
+  <span class="floater f10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="5"/><path d="M8.5 13l-1.5 7 5-2.5 5 2.5-1.5-7"/></svg></span>
+  <span class="floater f12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l2.5 6H21l-5 4 2 7-6-4-6 4 2-7-5-4h6.5z"/></svg></span>
+  <span class="floater f19"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4.5c0-1.4 1-2.5 2.3-2.5S16 11.1 16 12.5V17"/></svg></span>
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2 class="sec-title">Certifications</h2></div>
+    <div class="cert-grid">
+      <div class="cert-item featured">
+        <div class="cert-name">HCIA-AI V4.0 <span class="hl">Certified</span></div>
+        <div class="cert-org">Huawei</div>
+        <div class="cert-date">Feb 2026 → Feb 2029</div>
+      </div>
+      <div class="cert-item featured">
+        <div class="cert-name">AI Program</div>
+        <div class="cert-org">Samsung Innovation Campus</div>
+        <div class="cert-date">Nov 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">AI Training Track — 100%</div>
+        <div class="cert-org">National Telecommunication Institute</div>
+        <div class="cert-date">Jan – Feb 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">ML Foundations</div>
+        <div class="cert-org">AWS Educate</div>
+        <div class="cert-date">Jun 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">Fundamentals of Remote Sensing</div>
+        <div class="cert-org">NASA ARSET</div>
+        <div class="cert-date">May 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">AI &amp; ML Summer Camp</div>
+        <div class="cert-org">Sprints × Microsoft</div>
+        <div class="cert-date">Jul – Sep 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">Data Scientist Internship</div>
+        <div class="cert-org">Qafza</div>
+        <div class="cert-date">Dec 2024 – Apr 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">Probability &amp; Statistics</div>
+        <div class="cert-org">Arabsera</div>
+        <div class="cert-date">May 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">Math Foundations — Linear Algebra, Discrete Math, Optimization</div>
+        <div class="cert-org">Arabsera</div>
+        <div class="cert-date">Apr – Jun 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">GIS Summer Training</div>
+        <div class="cert-org">Localia Geospatial Services</div>
+        <div class="cert-date">Jul – Aug 2025</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">Digital Engineering Program</div>
+        <div class="cert-org">KAITECH</div>
+        <div class="cert-date">Aug – Oct 2024</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-name">AI &amp; ML Foundations (SprintUp)</div>
+        <div class="cert-org">Sprints</div>
+        <div class="cert-date">May 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="reveal">
+  <div class="wrap contact-inner">
+    <div class="contact-title">Let's build something<br><span>spatially intelligent.</span></div>
+    <p class="contact-sub">Open to full-time GeoAI, ML/CV, and geospatial engineering roles — remote or Cairo-based.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="mailto:mohamed.a.almansoury@gmail.com"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>mohamed.a.almansoury@gmail.com</a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/mohamedalmansoury/" target="_blank"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4.5c0-1.4 1-2.5 2.3-2.5S16 11.1 16 12.5V17"/></svg>LinkedIn</a>
+      <a class="btn btn-ghost" href="https://github.com/mohamedalmansoury" target="_blank"><svg class="icon" viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.7 5.4 3 5.4 3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.4c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+      <a class="btn btn-ghost" href="https://www.youtube.com/@AL_Mansoury" target="_blank"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>YouTube</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Mohamed Ahmed AL-Mansoury — Cairo, Egypt</footer>
+
+<script>
+// ---- Animated AI / Geo / Computer-Vision background ----
+const canvas = document.getElementById('aiCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+resize(); addEventListener('resize', resize);
+
+const accent = getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim() || '#018b61';
+function hexToRgb(hex){
+  hex = hex.replace('#','').trim();
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const n = parseInt(hex,16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+const [R,G,B] = hexToRgb(accent);
+const rgba = (a)=>`rgba(${R},${G},${B},${a})`;
+
+// neural-net style nodes (AI)
+const NODE_COUNT = Math.min(46, Math.floor(W/34)) * (W<760?0.5:1) | 0;
+const nodes = Array.from({length:NODE_COUNT}, ()=>({
+  x: Math.random()*W, y: Math.random()*H,
+  vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25,
+  r: Math.random()*1.6+1
+}));
+
+// CV-style detection boxes drifting slowly
+const boxes = Array.from({length:5}, ()=>({
+  x: Math.random()*W, y: Math.random()*H,
+  w: 60+Math.random()*90, h: 40+Math.random()*60,
+  vx:(Math.random()-0.5)*0.15, vy:(Math.random()-0.5)*0.15,
+  life: Math.random()*Math.PI*2
+}));
+
+let radarAngle = 0;
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // radar sweep (geo)
+  const cx = W*0.82, cy = H*0.28, radius = Math.min(W,H)*0.4;
+  const grad = ctx.createConicGradient ? ctx.createConicGradient(radarAngle, cx, cy) : null;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI*2);
+  ctx.strokeStyle = rgba(0.08);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.arc(cx,cy,radius, radarAngle, radarAngle+0.5);
+  ctx.closePath();
+  ctx.fillStyle = rgba(0.05);
+  ctx.fill();
+  ctx.restore();
+  radarAngle += 0.006;
+
+  // neural net nodes + connecting edges (AI)
+  for(let i=0;i<nodes.length;i++){
+    const n = nodes[i];
+    n.x += n.vx; n.y += n.vy;
+    if(n.x<0||n.x>W) n.vx*=-1;
+    if(n.y<0||n.y>H) n.vy*=-1;
+  }
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i], b=nodes[j];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if(d<130){
+        ctx.beginPath();
+        ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle = rgba(0.09*(1-d/130));
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+  }
+  for(const n of nodes){
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle = rgba(0.35);
+    ctx.fill();
+  }
+
+  // CV detection boxes with corner brackets
+  for(const b of boxes){
+    b.x += b.vx; b.y += b.vy; b.life += 0.01;
+    if(b.x<0||b.x>W-b.w) b.vx*=-1;
+    if(b.y<0||b.y>H-b.h) b.vy*=-1;
+    const pulse = 0.12 + Math.sin(b.life)*0.05;
+    ctx.strokeStyle = rgba(Math.max(pulse,0.05));
+    ctx.lineWidth = 1;
+    const s = 10;
+    // corners only, CV bounding-box style
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y+s); ctx.lineTo(b.x,b.y); ctx.lineTo(b.x+s,b.y);
+    ctx.moveTo(b.x+b.w-s, b.y); ctx.lineTo(b.x+b.w,b.y); ctx.lineTo(b.x+b.w,b.y+s);
+    ctx.moveTo(b.x+b.w, b.y+b.h-s); ctx.lineTo(b.x+b.w,b.y+b.h); ctx.lineTo(b.x+b.w-s,b.y+b.h);
+    ctx.moveTo(b.x+s, b.y+b.h); ctx.lineTo(b.x,b.y+b.h); ctx.lineTo(b.x,b.y+b.h-s);
+    ctx.stroke();
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal, .proj-card, .exp-row');
+revealEls.forEach(el => el.classList.add('reveal'));
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+},{threshold:0.12});
+revealEls.forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
